@@ -1,9 +1,5 @@
 {
-  "buildCommand": "vite build",
-  "framework": "vite",
-  "build": {
-    "env": {
-      "NITRO_PRESET": "vercel"
-    }
-  }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
