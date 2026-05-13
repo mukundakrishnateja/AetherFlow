@@ -9,6 +9,15 @@ import {
 import { useUser, SignOutButton, UserButton } from "@clerk/clerk-react";
 import { useAether } from "@/lib/Store";
 
+const Logo = ({ className = "w-6 h-6", iconClassName = "w-4 h-4" }) => (
+  <div className={`${className} rounded-xl flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95`}
+    style={{ background: "var(--gradient-primary)" }}>
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${iconClassName} text-white`}>
+      <path d="M12 2L14.5 9H21.5L16 13L18.5 20L12 16L5.5 20L8 13L2.5 9H9.5L12 2Z" fill="currentColor" />
+    </svg>
+  </div>
+);
+
 /* ---------- Tiny atoms ---------- */
 const Card = ({ className = "", children }) =>
 <div className={`glass-card active:scale-[0.99] group/card overflow-hidden relative ${className}`}>
@@ -55,17 +64,14 @@ function Sidebar({ open, onClose }) {
               }}
               className="flex items-center gap-2.5 hover:opacity-80 transition-opacity text-left"
             >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: "var(--gradient-primary)" }}>
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
+              <Logo className="w-10 h-10" iconClassName="w-6 h-6" />
               <div>
                 <h1 className="font-bold text-lg leading-none gradient-text">AetherFlow</h1>
                 <p className="text-[11px] text-muted-foreground mt-0.5">Productivity OS</p>
               </div>
             </button>
-            <button onClick={onClose} className="lg:hidden p-1.5 rounded-lg glass">
-              <X className="w-4 h-4" />
+            <button onClick={onClose} className="lg:hidden p-2 rounded-xl glass hover:bg-white/20 transition-colors">
+              <X className="w-5 h-5" />
             </button>
           </div>
 
@@ -150,11 +156,14 @@ function Sidebar({ open, onClose }) {
             </div>
           </div>
 
-          <SignOutButton>
-            <button className="mt-3 w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-foreground/70 hover:bg-red-500/10 hover:text-red-500 transition-colors">
-              <LogOut className="w-4 h-4" /> Logout
-            </button>
-          </SignOutButton>
+          <div className="mt-auto pt-4 border-t border-white/10">
+            <SignOutButton>
+              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-500/10 transition-all active:scale-95 group">
+                <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" /> 
+                <span>Logout</span>
+              </button>
+            </SignOutButton>
+          </div>
         </div>
       </aside>
     </>);
@@ -191,14 +200,14 @@ function TopBar({ onMenu }) {
       <button onClick={onMenu} className="lg:hidden p-2 rounded-xl glass hover:bg-white/20">
         <Menu className="w-4 h-4" />
       </button>
-      <div className="flex-1 flex items-center gap-2 glass rounded-xl px-4 py-2.5 transition-all focus-within:ring-2 ring-primary/20 bg-white/5 dark:bg-black/40 relative">
-        <Search className="w-4 h-4 text-muted-foreground" />
+      <div className="flex-1 flex items-center gap-2 glass rounded-xl px-4 py-2.5 transition-all focus-within:ring-2 ring-primary/20 bg-white/5 dark:bg-black/40 relative max-w-md">
+        <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         <input
-          placeholder="Search everything…"
+          placeholder="Search…"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="bg-transparent outline-none text-sm flex-1 placeholder:text-muted-foreground text-foreground dark:text-white" />
-        <Pill className="hidden sm:inline bg-black/5 dark:bg-white/10">⌘K</Pill>
+          className="bg-transparent outline-none text-sm flex-1 placeholder:text-muted-foreground text-foreground dark:text-white min-w-0" />
+        <Pill className="hidden md:inline bg-black/5 dark:bg-white/10 flex-shrink-0">⌘K</Pill>
 
         {searchResults.length > 0 && (
           <div className="absolute top-full left-0 right-0 mt-2 glass-strong rounded-xl shadow-2xl overflow-hidden border border-white/20 animate-in fade-in slide-in-from-top-2 duration-200">
@@ -227,7 +236,7 @@ function TopBar({ onMenu }) {
         )}
       </div>
       
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-shrink-0">
         {isTimerRunning && (
           <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 animate-pulse">
             <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--primary)]" />
@@ -994,36 +1003,38 @@ function Analytics() {
         </div>
       </div>
 
-      <div className={`flex items-end justify-between px-2 pt-10 pb-2 relative group ${viewMode === "Week" ? "h-64" : "h-48"}`}>
-        <div className="absolute inset-x-0 bottom-0 h-px bg-white/10" />
-        {data.map((v, i) => {
-          const isToday = activeDays[i].toLocaleDateString() === todayStr;
-          return (
-            <div key={i} className="flex-1 flex flex-col items-center gap-3 group/bar relative h-full justify-end">
-              <div className="w-full max-w-[40px] bg-white/5 rounded-t-lg relative overflow-hidden h-full flex flex-col justify-end">
-                <div 
-                  className="w-full rounded-t-lg transition-all duration-1000 ease-out relative border-t border-white/20"
-                  style={{ 
-                    height: `${Math.max(v > 0 ? 12 : 5, v)}%`, 
-                    background: isToday ? "var(--gradient-primary)" : "var(--gradient-cyan)",
-                    boxShadow: isToday && v > 0 ? "0 0 15px var(--primary)" : "none",
-                    opacity: v === 0 ? 0.2 : 1
-                  }}
-                >
-                  <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/bar:opacity-100 transition-opacity" />
-                  {v > 0 && (
-                     <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-primary dark:text-white drop-shadow-md opacity-0 group-hover/bar:opacity-100 transition-opacity">
-                       {Math.round(v)}%
-                     </div>
-                  )}
+      <div className="overflow-x-auto no-scrollbar -mx-2 px-2">
+        <div className={`flex items-end justify-between pt-10 pb-2 relative group min-w-[500px] md:min-w-0 ${viewMode === "Week" ? "h-64" : "h-48"}`}>
+          <div className="absolute inset-x-0 bottom-0 h-px bg-white/10" />
+          {data.map((v, i) => {
+            const isToday = activeDays[i].toLocaleDateString() === todayStr;
+            return (
+              <div key={i} className="flex-1 flex flex-col items-center gap-3 group/bar relative h-full justify-end">
+                <div className="w-full max-w-[40px] bg-white/5 rounded-t-lg relative overflow-hidden h-full flex flex-col justify-end">
+                  <div 
+                    className="w-full rounded-t-lg transition-all duration-1000 ease-out relative border-t border-white/20"
+                    style={{ 
+                      height: `${Math.max(v > 0 ? 12 : 5, v)}%`, 
+                      background: isToday ? "var(--gradient-primary)" : "var(--gradient-cyan)",
+                      boxShadow: isToday && v > 0 ? "0 0 15px var(--primary)" : "none",
+                      opacity: v === 0 ? 0.2 : 1
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/bar:opacity-100 transition-opacity" />
+                    {v > 0 && (
+                       <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-primary dark:text-white drop-shadow-md opacity-0 group-hover/bar:opacity-100 transition-opacity">
+                         {Math.round(v)}%
+                       </div>
+                    )}
+                  </div>
                 </div>
+                <span className={`text-[10px] font-bold tracking-tighter ${isToday ? "text-primary scale-110" : "text-muted-foreground"}`}>
+                  {labels[i]}
+                </span>
               </div>
-              <span className={`text-[10px] font-bold tracking-tighter ${isToday ? "text-primary scale-110" : "text-muted-foreground"}`}>
-                {labels[i]}
-              </span>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </Card>);
 }
@@ -1381,28 +1392,29 @@ function Heatmap() {
           </div>
         </div>
       </div>
-
-      <div className="grid grid-rows-7 grid-flow-col gap-1.5 h-32 relative">
-        <div className="absolute inset-0 grid grid-rows-7 grid-flow-col gap-1.5 pointer-events-none opacity-[0.03]">
-           {[...Array(84)].map((_, i) => <div key={i} className="w-full aspect-square bg-foreground rounded-[1px]" />)}
+      <div className="overflow-x-auto no-scrollbar -mx-2 px-2">
+        <div className="grid grid-rows-7 grid-flow-col gap-1.5 h-32 relative min-w-[600px] md:min-w-0">
+          <div className="absolute inset-0 grid grid-rows-7 grid-flow-col gap-1.5 pointer-events-none opacity-[0.03]">
+             {[...Array(84)].map((_, i) => <div key={i} className="w-full aspect-square bg-foreground rounded-[1px]" />)}
+          </div>
+          {pageData.map((day, i) => {
+            const isHovered = hoveredIndex === i;
+            return (
+              <div 
+                key={i} 
+                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                className={`w-full aspect-square rounded-[3px] transition-all duration-300 ${getIntensity(day.value, day.isFuture)} ${isHovered ? "scale-150 z-10 shadow-xl ring-2 ring-white/50" : ""}`}
+              >
+                {isHovered && !day.isFuture && (
+                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 glass px-2 py-1 rounded text-[10px] font-bold whitespace-nowrap z-50 pointer-events-none text-foreground dark:text-white">
+                    {day.date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}: {Math.round(day.value * 100)}%
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-        {pageData.map((day, i) => {
-          const isHovered = hoveredIndex === i;
-          return (
-            <div 
-              key={i} 
-              onMouseEnter={() => setHoveredIndex(i)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              className={`w-full aspect-square rounded-[3px] transition-all duration-300 ${getIntensity(day.value, day.isFuture)} ${isHovered ? "scale-150 z-10 shadow-xl ring-2 ring-white/50" : ""}`}
-            >
-              {isHovered && !day.isFuture && (
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 glass px-2 py-1 rounded text-[10px] font-bold whitespace-nowrap z-50 pointer-events-none text-foreground dark:text-white">
-                  {day.date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}: {Math.round(day.value * 100)}%
-                </div>
-              )}
-            </div>
-          );
-        })}
       </div>
     </Card>);
 }
@@ -1798,9 +1810,7 @@ export default function Dashboard() {
       <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background dark:bg-black overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{ background: "radial-gradient(circle at center, var(--primary) 0%, transparent 70%)", filter: "blur(60px)" }} />
         <div className="relative flex flex-col items-center animate-in fade-in zoom-in duration-1000">
-          <div className="w-20 h-20 rounded-3xl bg-primary/20 flex items-center justify-center mb-6 ring-4 ring-primary/10 animate-pulse">
-            <Sparkles className="w-10 h-10 text-primary" />
-          </div>
+          <Logo className="w-20 h-20 rounded-3xl mb-6 ring-4 ring-primary/10 animate-pulse" iconClassName="w-10 h-10" />
           <h1 className="text-4xl font-black gradient-text tracking-tighter mb-2">AetherFlow</h1>
           <div className="h-1 w-48 bg-white/10 rounded-full overflow-hidden relative">
             <div className="absolute inset-y-0 left-0 bg-primary w-1/3 rounded-full animate-[loading_1.5s_ease-in-out_infinite]" />
@@ -1815,10 +1825,11 @@ export default function Dashboard() {
     <div className="min-h-screen flex animate-in fade-in duration-700">
       <Sidebar open={open} onClose={() => setOpen(false)} />
 
-      <main className="flex-1 min-w-0 p-4 lg:p-6 space-y-5 relative">
-        {activeView !== "Focus" && <TopBar onMenu={() => setOpen(true)} />}
+      <main className="flex-1 min-w-0 flex flex-col p-3 sm:p-4 lg:p-6 space-y-5 relative overflow-x-hidden">
+        <div className="max-w-[1600px] mx-auto w-full flex flex-col space-y-5">
+          {activeView !== "Focus" && <TopBar onMenu={() => setOpen(true)} />}
 
-        <div className="relative">
+          <div className="relative">
           {isViewChanging && (
             <div className="absolute inset-0 z-50 flex items-center justify-center animate-in fade-in duration-300 pointer-events-none">
               <div className="view-loader" />
@@ -1827,9 +1838,10 @@ export default function Dashboard() {
           <div className={`transition-all duration-500 ${isViewChanging ? "opacity-0 scale-[0.98] blur-sm" : "opacity-100 scale-100 blur-0"}`}>
             {renderView()}
           </div>
+          </div>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground pb-4 mt-10">
+        <p className="text-center text-xs text-muted-foreground pb-4 mt-auto pt-10">
           AetherFlow · Designed for deep work and beautiful focus.
         </p>
       </main>
