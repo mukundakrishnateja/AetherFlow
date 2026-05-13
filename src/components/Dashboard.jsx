@@ -196,14 +196,15 @@ function TopBar({ onMenu }) {
   ].slice(0, 5);
 
   return (
-    <div className="glass-strong rounded-2xl p-3 flex items-center gap-3 relative z-50 bg-white/5 dark:bg-black/40 border border-white/10 text-foreground dark:text-foreground">
-      <button onClick={onMenu} className="lg:hidden p-2 rounded-xl glass hover:bg-white/20">
-        <Menu className="w-4 h-4" />
-      </button>
-      <div className="flex-1 flex items-center gap-2 glass rounded-xl px-4 py-2.5 transition-all focus-within:ring-2 ring-primary/20 bg-white/5 dark:bg-black/40 relative max-w-md">
-        <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-        <input
-          placeholder="Search…"
+    <div className="glass-strong rounded-2xl p-2.5 sm:p-3 flex items-center justify-between gap-4 sticky top-0 z-50 bg-white/10 dark:bg-black/60 backdrop-blur-xl border border-white/20 text-foreground dark:text-foreground shadow-2xl transition-all duration-300">
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        <button onClick={onMenu} className="lg:hidden p-2 rounded-xl glass hover:bg-white/20 transition-all active:scale-95 flex-shrink-0">
+          <Menu className="w-4 h-4" />
+        </button>
+        <div className="flex-1 flex items-center gap-2 glass rounded-xl px-4 py-2 transition-all focus-within:ring-2 ring-primary/20 bg-white/5 dark:bg-black/40 relative max-w-xl group">
+          <Search className="w-4 h-4 text-muted-foreground flex-shrink-0 group-focus-within:text-primary transition-colors" />
+          <input
+            placeholder="Search everything…"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="bg-transparent outline-none text-sm flex-1 placeholder:text-muted-foreground text-foreground dark:text-white min-w-0" />
@@ -235,8 +236,9 @@ function TopBar({ onMenu }) {
           </div>
         )}
       </div>
+      </div>
       
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex items-center gap-3 flex-shrink-0">
         {isTimerRunning && (
           <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 animate-pulse">
             <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--primary)]" />
